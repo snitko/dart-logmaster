@@ -7,26 +7,33 @@ class Logmaster {
   List report_adapters = [];
   List report_futures  = [];
 
-  static const int DEBUG = 0; 
-  static const int INFO  = 1; 
-  static const int WARN  = 2; 
-  static const int ERROR = 3; 
-  static const int FATAL = 4; 
+  static Map LOG_LEVELS = {
+    'DEBUG': 0,
+    'INFO' : 1,
+    'WARN' : 2,
+    'ERROR': 3,
+    'FATAL': 4
+  };
 
-  Logmaster(this.report_adapters) {}
+  Logmaster(this.report_adapters) {
+    // Backreference to the object, which is going to be using those adapters.
+    // Helps it with determining the LOG_LEVEL string version, for instance.
+    this.report_adapters.forEach((ra) => ra.logmaster = this);
+  }
 
   capture(message, { log_level: null }) {
 
     if(log_level == null)
       if(message is Exception)
-        log_level = ERROR;
+        log_level = LOG_LEVELS['ERROR'];
       else
-        log_level = INFO;
+        log_level = LOG_LEVELS['INFO'];
 
     report(message, log_level);
 
     if(message is Exception && throw_exceptions)
       throw(message);
+    
   }
 
   /** Uses report adapters to send log messages to various targets */
@@ -37,8 +44,15 @@ class Logmaster {
 
     report_adapters.forEach((ra) {
       if(ra.log_level <= log_level)
-        report_futures.add(new Future(() => ra.post(report)));
+        report_futures.add(new Future(() => ra.post(report, log_level)));
     });
+  }
+  
+  log_level_as_string(int level) {
+    for(var k in LOG_LEVELS.keys) {
+      if(LOG_LEVELS[k] == level)
+        return k;
+    }
   }
 
 }
