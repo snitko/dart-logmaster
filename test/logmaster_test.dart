@@ -26,12 +26,12 @@ void main() {
     logmaster = new Logmaster(report_adapters);
   });
 
-  test("raises error if exception is passed", () async {
+  test("raises error if exception is passed", () {
     expect(() => logmaster.capture(new Exception("hello world")), throws);
     expect(() => logmaster.capture("Just a message"), returnsNormally);
   });
 
-  test("reports error to all of the adapters with the log levels above or equal to the reported one", () async {
+  test("reports error to all of the adapters with the log levels above or equal to the reported one", () {
     logmaster.capture("info message", log_level: 1);
     logmaster.capture("warn message", log_level: 2);
     logmaster.report_futures[1].then((v) {
