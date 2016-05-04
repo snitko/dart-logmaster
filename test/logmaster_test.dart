@@ -1,6 +1,6 @@
 import '../lib/logmaster.dart';
 import '../lib/report_adapters/console_report_adapter.dart';
-import "package:test/test.dart";
+import 'package:test/test.dart';
 
 var reports = [];
 

@@ -24,16 +24,16 @@ class Logmaster {
   capture(message, { log_level: null }) {
 
     if(log_level == null)
-      if(message is Exception)
-        log_level = LOG_LEVELS['ERROR'];
-      else
+      if(message is String)
         log_level = LOG_LEVELS['INFO'];
+      else
+        log_level = LOG_LEVELS['ERROR'];
 
     report(message, log_level);
 
-    if(message is Exception && throw_exceptions)
+    if(!(message is String) && throw_exceptions)
       throw(message);
-    
+
   }
 
   /** Uses report adapters to send log messages to various targets */
@@ -47,7 +47,7 @@ class Logmaster {
         report_futures.add(new Future(() => ra.post(report, log_level)));
     });
   }
-  
+
   log_level_as_string(int level) {
     for(var k in LOG_LEVELS.keys) {
       if(LOG_LEVELS[k] == level)
