@@ -7,13 +7,13 @@ var reports = [];
 class ReportAdapter1 {
   var logmaster;
   var log_level = 1;
-  post(r, level) => reports.add("report for log level $level added to ReportAdapter1");
+  post(r, level, [stack_trace=""]) => reports.add("report for log level $level added to ReportAdapter1");
 }
 
 class ReportAdapter2 {
   var logmaster;
   var log_level = 2;
-  post(r, level) => reports.add("report for log level $level added to ReportAdapter2");
+  post(r, level, [stack_trace=""]) => reports.add("report for log level $level added to ReportAdapter2");
 }
 
 void main() {
@@ -34,13 +34,11 @@ void main() {
   test("reports error to all of the adapters with the log levels above or equal to the reported one", () {
     logmaster.capture("info message", log_level: 1);
     logmaster.capture("warn message", log_level: 2);
-    logmaster.report_futures[1].then((v) {
-      expect(reports, equals([
-        "report for log level 1 added to ReportAdapter1",
-        "report for log level 2 added to ReportAdapter1",
-        "report for log level 2 added to ReportAdapter2"
-      ]));
-    });
+    expect(reports, equals([
+      "report for log level 1 added to ReportAdapter1",
+      "report for log level 2 added to ReportAdapter1",
+      "report for log level 2 added to ReportAdapter2"
+    ]));
   });
 
 }

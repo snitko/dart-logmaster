@@ -1,5 +1,5 @@
 name: logmaster
-version: 0.1.0
+version: 0.1.1
 description: >
   A logger intended to catch exceptions or simply report activity,
   then post it to a server or store locally fo further inspection.

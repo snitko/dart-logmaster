@@ -5,7 +5,6 @@ class Logmaster {
 
   bool throw_exceptions = true; // if set to true, after reports have been sent, raises errors
   List report_adapters = [];
-  List report_futures  = [];
 
   static Map LOG_LEVELS = {
     'DEBUG': 0,
@@ -21,7 +20,7 @@ class Logmaster {
     this.report_adapters.forEach((ra) => ra.logmaster = this);
   }
 
-  capture(message, { log_level: null }) {
+  capture(message, { log_level: null, stack_trace: "" }) {
 
     if(log_level == null)
       if(message is String)
@@ -29,7 +28,7 @@ class Logmaster {
       else
         log_level = LOG_LEVELS['ERROR'];
 
-    report(message, log_level);
+    report(message, log_level, stack_trace);
 
     if(!(message is String) && throw_exceptions)
       throw(message);
@@ -37,15 +36,13 @@ class Logmaster {
   }
 
   /** Uses report adapters to send log messages to various targets */
-  report(report, log_level) {
-
-    // clean up from the  previous report() call
-    report_futures = [];
+  report(report, log_level, [stack_trace=""]) {
 
     report_adapters.forEach((ra) {
       if(ra.log_level <= log_level)
-        report_futures.add(new Future(() => ra.post(report, log_level)));
+        ra.post(report, log_level, stack_trace);
     });
+
   }
 
   log_level_as_string(int level) {

@@ -8,7 +8,7 @@ class HttpReportAdapter {
 
   HttpReportAdapter(this.url) {}
 
-  post(r, level) {
+  post(r, level, [stack_trace=""]) {
 
     var data = {
       'message'   : r,
@@ -16,10 +16,14 @@ class HttpReportAdapter {
     };
 
     if(this.logmaster != null)
-     data['log_level_string'] = this.logmaster.log_level_as_string(level);
+      data['log_level_string'] = this.logmaster.log_level_as_string(level);
+    
+    return makeAjaxRequest({ "error": "${data["message"]}\nStack trace:\n$stack_trace" });
 
+  }
+
+  makeAjaxRequest(data) {
     return HttpRequest.postFormData(this.url, data);
-
   }
 
 }
